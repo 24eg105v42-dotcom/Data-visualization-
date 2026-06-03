@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Storytelling with Data – Student Performance</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ink:    #1a1a2e;
+    --paper:  #faf8f3;
+    --accent: #2E86AB;
+    --red:    #E84855;
+    --green:  #3BB273;
+    --gold:   #F4A261;
+    --purple: #8338EC;
+    --rule:   #d4c9b0;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 60px 40px 40px;
+    text-align: center;
+    border-bottom: 6px solid var(--gold);
+  }
+  .masthead .label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .masthead h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 6vw, 56px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .masthead .subtitle {
+    font-size: 15px;
+    color: #a9a09a;
+    font-style: italic;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 820px; margin: 0 auto; padding: 48px 24px; }
+
+  /* ── LEAD ── */
+  .lead {
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    color: #444;
+    border-left: 4px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 40px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 36px 0;
+  }
+
+  /* ── SECTION HEADING ── */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  h2 .chapter {
+    display: block;
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+
+  p { margin-bottom: 16px; }
+
+  /* ── STAT CARDS ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--accent);
+    padding: 20px 16px;
+    text-align: center;
+    border-radius: 2px;
+  }
+  .stat-card .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-card .desc {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 4px;
+  }
+  .stat-card.red   { border-top-color: var(--red);    }
+  .stat-card.red   .num { color: var(--red); }
+  .stat-card.green { border-top-color: var(--green);  }
+  .stat-card.green .num { color: var(--green); }
+  .stat-card.gold  { border-top-color: var(--gold);   }
+  .stat-card.gold  .num { color: var(--gold); }
+  .stat-card.purple{ border-top-color: var(--purple); }
+  .stat-card.purple .num { color: var(--purple); }
+
+  /* ── PULLQUOTE ── */
+  .pullquote {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 28px 32px;
+    margin: 36px 0;
+    border-radius: 2px;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .pullquote span {
+    display: block;
+    font-family: 'Source Serif 4', serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 12px;
+    font-style: normal;
+  }
+
+  /* ── COMPARISON BAR ── */
+  .compare { margin: 24px 0; }
+  .compare-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .compare-label { width: 80px; font-size: 13px; text-align: right; color: #666; }
+  .bar-bg { flex: 1; background: #e8e4da; border-radius: 2px; height: 28px; position: relative; }
+  .bar-fill { height: 100%; border-radius: 2px; display: flex; align-items: center;
+              padding-left: 10px; font-size: 13px; font-weight: 600; color: white; }
+  .bar-male   { background: var(--accent); }
+  .bar-female { background: var(--red); }
+  .bar-math   { background: var(--accent); }
+  .bar-sci    { background: var(--green); }
+  .bar-eng    { background: var(--gold); }
+
+  /* ── FINDING CARDS ── */
+  .findings { display: grid; gap: 16px; margin: 24px 0; }
+  .finding {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: white; border: 1px solid var(--rule);
+    padding: 20px; border-radius: 2px;
+  }
+  .finding .icon {
+    font-size: 28px; flex-shrink: 0;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .finding strong { display: block; margin-bottom: 4px; font-size: 15px; }
+  .finding p { margin: 0; font-size: 14px; color: #555; line-height: 1.6; }
+
+  /* ── CLEANING TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+  th { background: var(--ink); color: var(--paper); padding: 10px 14px; text-align: left;
+       font-family: 'Source Serif 4', serif; font-weight: 600; font-size: 12px;
+       letter-spacing: 1px; text-transform: uppercase; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--rule); }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f5f2eb; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .badge-fix  { background: #d4edda; color: #155724; }
+  .badge-drop { background: #f8d7da; color: #721c24; }
+  .badge-new  { background: #cce5ff; color: #004085; }
+
+  /* ── CONCLUSION ── */
+  .conclusion {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2E86AB 100%);
+    color: white; padding: 40px; margin-top: 40px; border-radius: 2px;
+  }
+  .conclusion h2 { color: white; }
+  .conclusion h2 .chapter { color: var(--gold); }
+  .conclusion p { color: #cce; margin-bottom: 12px; }
+  .conclusion ul { padding-left: 20px; color: #cce; }
+  .conclusion li { margin-bottom: 8px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 24px;
+    font-size: 12px; color: #aaa;
+    border-top: 1px solid var(--rule);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="label">Data Cleaning &amp; Visualization Project</div>
+  <h1>What Does Student<br>Performance Data Tell Us?</h1>
+  <div class="subtitle">A storytelling report on 200 student records — cleaned, analyzed, and interpreted</div>
+</div>
+
+<div class="container">
+
+  <!-- LEAD -->
+  <p class="lead">
+    Behind every number in a dataset is a student — their effort, their struggles,
+    and their potential. This report cleans raw, messy data and listens to what it has to say.
+  </p>
+
+  <!-- ── CHAPTER 1 ── -->
+  <h2><span class="chapter">Chapter 1</span>The Messy Reality — Before Cleaning</h2>
+  <p>
+    Real-world data is never perfect. Our raw dataset of <strong>210 records</strong> arrived
+    with a host of problems — missing scores, inconsistent gender labels, impossible ages,
+    and duplicate entries. Before any insight could be drawn, the data had to be fixed.
+  </p>
+
+  <table>
+    <tr><th>Problem Found</th><th>Column(s) Affected</th><th>How Fixed</th><th>Action</th></tr>
+    <tr><td>Missing scores</td><td>Math, Science, English, Attendance</td><td>Filled with median value</td><td><span class="badge badge-fix">Fixed</span></td></tr>
+    <tr><td>Missing labels</td><td>Gender, Grade</td><td>Filled with most common value</td><td><span class="badge badge-fix">Fixed</span></td></tr>
+    <tr><td>Outlier ages (−5, 999)</td><td>Age</td><td>Replaced with median age</td><td><span class="badge badge-fix">Fixed</span></td></tr>
+    <tr><td>Duplicate rows</td><td>All columns</td><td>Removed 10 duplicate rows</td><td><span class="badge badge-drop">Removed</span></td></tr>
+    <tr><td>Inconsistent casing</td><td>Gender (male / FEMALE)</td><td>Standardized to Title Case</td><td><span class="badge badge-fix">Fixed</span></td></tr>
+    <tr><td>No overall score</td><td>—</td><td>Added TotalScore &amp; Percentage columns</td><td><span class="badge badge-new">Added</span></td></tr>
+  </table>
+
+  <p>After cleaning, the dataset reduced to a reliable <strong>200 records</strong> with
+  <strong>zero missing values</strong> — ready for analysis.</p>
+
+  <hr class="divider"/>
+
+  <!-- ── CHAPTER 2 ── -->
+  <h2><span class="chapter">Chapter 2</span>The Big Picture — Key Numbers</h2>
+  <p>With clean data in hand, the first question is simple: how are students doing overall?</p>
+
+  <div class="stat-row">
+    <div class="stat-card"><span class="num">200</span><div class="desc">Total Students</div></div>
+    <div class="stat-card green"><span class="num">64.1%</span><div class="desc">Avg Overall Score</div></div>
+    <div class="stat-card gold"><span class="num">65.9</span><div class="desc">Avg Math Score</div></div>
+    <div class="stat-card"><span class="num">63.5</span><div class="desc">Avg Science Score</div></div>
+    <div class="stat-card red"><span class="num">63.0</span><div class="desc">Avg English Score</div></div>
+    <div class="stat-card purple"><span class="num">76.6%</span><div class="desc">Avg Attendance</div></div>
+  </div>
+
+  <p>
+    Students scored highest in <strong>Mathematics (65.9)</strong> and lowest in
+    <strong>English (63.0)</strong>. The overall average of <strong>64.1%</strong> puts
+    the class just above passing — but there's meaningful variation hiding beneath that number.
+  </p>
+
+  <hr class="divider"/>
+
+  <!-- ── CHAPTER 3 ── -->
+  <h2><span class="chapter">Chapter 3</span>Subject by Subject — Where Do Students Struggle?</h2>
+
+  <div class="compare">
+    <div class="compare-row">
+      <div class="compare-label">Math</div>
+      <div class="bar-bg"><div class="bar-fill bar-math" style="width:65.9%">65.9</div></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Science</div>
+      <div class="bar-bg"><div class="bar-fill bar-sci" style="width:63.54%">63.5</div></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">English</div>
+      <div class="bar-bg"><div class="bar-fill bar-eng" style="width:62.96%">63.0</div></div>
+    </div>
+  </div>
+
+  <p>
+    The gap between subjects is small but consistent — Math leads, English lags.
+    This could suggest that students find language-based subjects harder,
+    or that less time is devoted to English practice.
+  </p>
+
+  <div class="pullquote">
+    "English is the weakest subject across both genders — a pattern that likely
+    reflects curriculum focus rather than individual ability."
+    <span>— Key Insight from Subject Analysis</span>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ── CHAPTER 4 ── -->
+  <h2><span class="chapter">Chapter 4</span>Gender — Is There a Performance Gap?</h2>
+
+  <div class="compare">
+    <div class="compare-row">
+      <div class="compare-label">Male</div>
+      <div class="bar-bg"><div class="bar-fill bar-male" style="width:63.18%">63.2%</div></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Female</div>
+      <div class="bar-bg"><div class="bar-fill bar-female" style="width:64.9%">64.9%</div></div>
+    </div>
+  </div>
+
+  <p>
+    Female students score slightly higher on average (<strong>64.9%</strong>) compared to
+    male students (<strong>63.2%</strong>). The gap is small — about 1.7 percentage points —
+    suggesting that gender alone is not a strong predictor of academic performance in this dataset.
+  </p>
+
+  <hr class="divider"/>
+
+  <!-- ── CHAPTER 5 ── -->
+  <h2><span class="chapter">Chapter 5</span>Grades — Who Is Excelling, Who Is Falling Behind?</h2>
+
+  <div class="stat-row">
+    <div class="stat-card green"><span class="num">51</span><div class="desc">Grade A Students</div></div>
+    <div class="stat-card red"><span class="num">41</span><div class="desc">Grade F Students</div></div>
+  </div>
+
+  <p>
+    <strong>51 students (25.5%)</strong> earned an A grade — a strong result.
+    However, <strong>41 students (20.5%)</strong> received an F, indicating that
+    roughly 1 in 5 students is at serious academic risk. This is a critical finding
+    that warrants attention from educators.
+  </p>
+
+  <hr class="divider"/>
+
+  <!-- ── CHAPTER 6 ── -->
+  <h2><span class="chapter">Chapter 6</span>Attendance — Does Showing Up Matter?</h2>
+
+  <p>
+    Conventional wisdom says attendance drives performance. In this dataset,
+    the correlation heatmap shows a <strong>weak positive correlation</strong> between
+    attendance and overall percentage — meaning attendance helps, but it isn't everything.
+  </p>
+
+  <div class="stat-row">
+    <div class="stat-card green">
+      <span class="num">63.4%</span>
+      <div class="desc">Avg Score<br>Attendance ≥ 80%</div>
+    </div>
+    <div class="stat-card red">
+      <span class="num">64.6%</span>
+      <div class="desc">Avg Score<br>Attendance &lt; 80%</div>
+    </div>
+  </div>
+
+  <p>
+    Interestingly, students with <em>lower</em> attendance scored marginally higher.
+    This suggests that <strong>quality of study at home</strong> may compensate for
+    missed classes — or that highly capable students feel less need to attend regularly.
+  </p>
+
+  <hr class="divider"/>
+
+  <!-- ── CHAPTER 7 ── -->
+  <h2><span class="chapter">Chapter 7</span>Key Findings at a Glance</h2>
+
+  <div class="findings">
+    <div class="finding">
+      <div class="icon">📊</div>
+      <div>
+        <strong>Mathematics is the strongest subject</strong>
+        <p>Average score of 65.9 — students perform best in quantitative subjects.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="icon">📝</div>
+      <div>
+        <strong>English needs more attention</strong>
+        <p>Lowest average at 63.0 — language skills may need targeted improvement programs.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="icon">⚠️</div>
+      <div>
+        <strong>1 in 5 students is failing</strong>
+        <p>41 students (20.5%) received Grade F — early intervention is needed.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="icon">👩‍🎓</div>
+      <div>
+        <strong>Female students slightly outperform male students</strong>
+        <p>A 1.7% gap exists — small but consistent across all three subjects.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="icon">🏫</div>
+      <div>
+        <strong>Attendance is not the only success factor</strong>
+        <p>Low-attendance students performed comparably — self-study habits matter too.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONCLUSION ── -->
+  <div class="conclusion">
+    <h2><span class="chapter">Conclusion</span>The Story the Data Tells</h2>
+    <p>
+      This dataset tells the story of a class that is performing adequately on average,
+      but hiding a struggling minority beneath that average. The data reveals:
+    </p>
+    <ul>
+      <li>Data cleaning is essential — 10 duplicates and dozens of missing values could have skewed every finding.</li>
+      <li>Subject difficulty varies — English consistently underperforms Math and Science.</li>
+      <li>A significant portion of students (20.5%) need academic support urgently.</li>
+      <li>Gender differences exist but are minor — not a primary concern.</li>
+      <li>Attendance alone does not determine success — learning habits and self-study play a role.</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  Data Cleaning &amp; Visualization Project &nbsp;·&nbsp; Storytelling with Data Report &nbsp;·&nbsp; Python · Pandas · Matplotlib · Seaborn
+</footer>
+
+</body>
+</html>
